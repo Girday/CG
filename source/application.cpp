@@ -1,24 +1,22 @@
 #include "application.hpp"
-
-#include <imgui.h>
+#include "scene.hpp"
 
 namespace application {
 
 bool initialize() {
-	return true;
+	return scene::initialize();
 }
 
 void shutdown() {
-	auto& context = graphics::internal::context;
-	vkQueueWaitIdle(context.graphics_queue);
+	scene::shutdown();
 }
 
-void update([[maybe_unused]] double time) {
-	ImGui::ShowDemoWindow();
+void update(double time) {
+	scene::update(time);
 }
 
 void render(const graphics::internal::FrameData& fd) {
-	(void)fd;
+	scene::render(fd);
 }
 
 } // namespace application

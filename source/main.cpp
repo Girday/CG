@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <climits>
+#include <cstdlib>
 
 #include <iostream>
 
@@ -17,7 +18,7 @@ namespace {
 constexpr int32_t default_window_width = 1280;
 constexpr int32_t default_window_height = 720;
 
-constexpr char default_window_title[] = "Vulkan Starter App";
+constexpr char default_window_title[] = "CG Lab 1 - Torus";
 
 GLFWwindow* glfw_window;
 
@@ -25,6 +26,8 @@ GLFWwindow* glfw_window;
 
 int main() {
 	int status = EXIT_SUCCESS;
+	const bool smoke_resize = std::getenv("CG_SMOKE_RESIZE") != nullptr;
+	uint32_t rendered_frames = 0;
 
 	if (!glfwInit()) {
 		std::cerr << "Failed to initialize GLFW\n";
@@ -73,6 +76,13 @@ int main() {
 	}
 
 	while (!glfwWindowShouldClose(glfw_window)) {
+		int framebuffer_width = 0;
+		int framebuffer_height = 0;
+		glfwGetFramebufferSize(glfw_window, &framebuffer_width, &framebuffer_height);
+		if (framebuffer_width == 0 || framebuffer_height == 0) {
+			glfwWaitEvents();
+			continue;
+		}
 		const double time = glfwGetTime();
 
 		glfwPollEvents();
@@ -83,8 +93,12 @@ int main() {
 		ImGui::Render();
 
 		graphics::internal::FrameData fd = graphics::internal::prepare();
+		if (fd.command_buffer == VK_NULL_HANDLE) continue;
 		application::render(fd);
 		graphics::internal::submitAndPresent();
+		++rendered_frames;
+		if (smoke_resize && rendered_frames == 30) glfwSetWindowSize(glfw_window, 960, 600);
+		if (smoke_resize && rendered_frames == 90) glfwSetWindowShouldClose(glfw_window, GLFW_TRUE);
 	}
 
 	application::shutdown();
@@ -99,5 +113,5 @@ err_imgui_init:
 err_null_window:
 	glfwTerminate();
 
-	return 0;
+	return status;
 }

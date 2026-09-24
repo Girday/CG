@@ -3,7 +3,7 @@ include(FetchContent)
 
 project(vulkan-starter-app LANGUAGES C CXX)
 
-add_executable(${PROJECT_NAME} source/main.cpp source/graphics_internal.cpp source/application.cpp)
+add_executable(${PROJECT_NAME} source/main.cpp source/graphics_internal.cpp source/application.cpp source/scene.cpp source/torus.cpp)
 
 if(LINUX)
 	target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wno-missing-field-initializers)
@@ -23,6 +23,14 @@ else()
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED TRUE CXX_STANDARD 20)
+
+include(CTest)
+if(BUILD_TESTING)
+	add_executable(geometry_math_test tests/geometry_math.cpp source/torus.cpp)
+	target_include_directories(geometry_math_test PRIVATE source)
+	set_target_properties(geometry_math_test PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED TRUE)
+	add_test(NAME geometry_math COMMAND geometry_math_test)
+endif()
 
 FetchContent_Declare(
 	glfw
@@ -81,8 +89,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 # Compile shaders
-find_program(GLSLC_FOUND glslc)
-if(GLSLC_FOUND)
+find_program(GLSLC_EXECUTABLE glslc REQUIRED)
+if(GLSLC_EXECUTABLE)
 	set(_SHADER_BINARIES)
 
 	macro(compile_shader SHADER_FILE)
@@ -92,7 +100,7 @@ if(GLSLC_FOUND)
 
 		add_custom_command(
 			OUTPUT ${SHADER_BINARY_PATH}
-			COMMAND glslc ${SHADER_SOURCE} -o ${SHADER_BINARY_PATH}
+			COMMAND ${GLSLC_EXECUTABLE} ${SHADER_SOURCE} -o ${SHADER_BINARY_PATH}
 			DEPENDS ${SHADER_SOURCE}
 			COMMENT "Compiling ${SHADER_FILE} shader"
 		)
@@ -105,6 +113,8 @@ if(GLSLC_FOUND)
 
 	# compile_shader(example.vert)
 	# compile_shader(example.frag)
+	compile_shader(torus.vert)
+	compile_shader(torus.frag)
 
 	add_custom_target(shaders DEPENDS ${_SHADER_BINARIES})
 	add_dependencies(${PROJECT_NAME} shaders)
