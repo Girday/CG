@@ -1,5 +1,5 @@
 build-*/
-shaders/*.spv
+*.spv
 imgui.ini
 .DS_Store
 .local/

@@ -1,66 +1,29 @@
-# 🌋 Vulkan Starter App
+# Компьютерная графика
 
-## Getting started
+Лабораторные работы по курсу «Компьютерная графика», МАИ.
 
-You need C++ compiler, Vulkan SDK and CMake installed before you can build this project.
+Каждая лабораторная находится в отдельной папке со своим кодом и материалами для сдачи.
 
-This project uses C++20 standard and thus requires either of those compilers:
-- GCC 10.X
-- Clang 10
-- Microsoft Visual Studio 2019
+| Лабораторная | Материалы |
+| --- | --- |
+| [№1](lab1/) | Основы 3D-графики, вариант 7 — тор. Код, снимки и отчёт |
+| [№2](lab2/) | Папка подготовлена для следующей работы |
+| [№3](lab3/) | Папка подготовлена для следующей работы |
+| [№4](lab4/) | Папка подготовлена для следующей работы |
+| [№5](lab5/) | Папка подготовлена для следующей работы |
 
-This is officially tested on *Windows* and *GNU/Linux platforms*, no *macOS* support yet.
-If you have a working macOS solution of this code, consider submitting a PR so others
-can build this example code without a hassle!
+Для сдачи первой работы: [lab1](https://github.com/Girday/CG/tree/main/lab1).
 
-<ins>**1. Downloading the repository**</ins>
+Сборка и запуск описаны в [lab1/README.md](lab1/README.md).
+Также можно собрать первую лабораторную из корня репозитория:
 
-Start by cloning the repository with `git clone --depth 1 https://github.com/vladeemerr/vulkan-starter-app`
-
-This repository does not contain any submodules, it utilizes CMake's `FetchContent` feature instead.
-
-<ins>**2. Configuring the project**</ins>
-
-Run either one of the CMake lines to download dependencies and configure the project:
-
-```bash
-cmake --preset debug       # for GNU/Linux (GCC/Clang)
-cmake --preset msvc-debug  # for Windows (Visual Studio 2019)
-cmake --preset mingw-debug # for Windows (MinGW)
+```sh
+cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build-debug --parallel
+ctest --test-dir build-debug --output-on-failure
+cd lab1
+../build-debug/lab1/cg-lab1
 ```
 
-If you wish to build in `release` mode, change `debug` to `release`.
-
-If changes are made (added/removed files), or if you want to regenerate project files, rerun the command above.
-
-<ins>**3. Building**</ins>
-
-To build the project, use the line below. You are most likely using `debug` preset, so
-the directory that will eventually contain your build files is named `build-debug`.
-
-Likewise for `release` that directory will be named `build-release`
-
-Run one those commands, depending on which preset you chose:
-
-```bash
-cmake --build build-debug --parallel # for debug
-cmake --build build-release --parallel # for release
-```
-
-### Running
-
-`build-*` directory will contain the executable in one of the subdirectories after successful build.
-
-For `msvc-{debug|release}` builds output subdirectory is set to `Debug` or `Release` respectively.
-For other configurations output subdirectory is set to `vulkan-starter-app`.
-
-**Make sure your working directory is set to the project root!**
-Project root is where this README file resides. Otherwise, the
-code responsible for loading shaders or other resources from files will fail,
-because relative paths are used.
-
-### Compiling shaders
-
-`CMakeLists.txt` has a build recipe for compiling shader files
-along with an application. Look for a comment in this file to see
-how to compile your shaders.
+Стартовый код основан на [Vulkan Starter App](https://github.com/vladeemerr/vulkan-starter-app).
+Лицензия и уведомления находятся в [LICENSE](LICENSE) и [NOTICE](NOTICE).
