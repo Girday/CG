@@ -4,3 +4,5 @@ project(CG LANGUAGES C CXX)
 include(CTest)
 
 add_subdirectory(lab1)
+
+add_subdirectory(lab2)
