@@ -32,7 +32,7 @@ struct FrameData {
 
 extern Context context;
 
-bool initialize(GLFWwindow* const window);
+bool initialize(GLFWwindow* const window, bool dynamic_rendering = false);
 void shutdown();
 
 void resize(uint32_t width, uint32_t height);

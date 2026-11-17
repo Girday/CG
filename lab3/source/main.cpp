@@ -18,7 +18,13 @@ namespace {
 constexpr int32_t default_window_width = 1280;
 constexpr int32_t default_window_height = 720;
 
+#ifdef CG_DYNAMIC_RENDERING
+constexpr char default_window_title[] = "CG Lab 4 - Shadow Mapping";
+constexpr bool use_dynamic_rendering = true;
+#else
 constexpr char default_window_title[] = "CG Lab 3 - Texture Mapping";
+constexpr bool use_dynamic_rendering = false;
+#endif
 
 GLFWwindow* glfw_window;
 
@@ -63,7 +69,7 @@ int main() {
 		goto err_imgui_glfw_init;
 	}
 
-	if (!graphics::internal::initialize(glfw_window)) {
+	if (!graphics::internal::initialize(glfw_window, use_dynamic_rendering)) {
 		std::cerr << "Failed to initialize graphics\n";
 		status = EXIT_FAILURE;
 		goto err_graphics_init;

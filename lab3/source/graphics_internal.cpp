@@ -411,13 +411,17 @@ bool rebuildSwapchain(uint32_t width, uint32_t height) {
 
 Context context;
 
-bool initialize(GLFWwindow* const window) {
+bool initialize(GLFWwindow* const window, bool dynamic_rendering) {
 	vkb::InstanceBuilder ib;
 
-	auto ibr = ib.require_api_version(VK_MAKE_VERSION(1, 1, 0))
+	auto ibr = ib.require_api_version(dynamic_rendering ? VK_API_VERSION_1_3 : VK_API_VERSION_1_1)
 				 .request_validation_layers()
                  .use_default_debug_messenger()
 				 .build();
+	if (!ibr) {
+		std::cerr << "Failed to create Vulkan instance: " << ibr.error().message() << '\n';
+		return false;
+	}
 
 	auto vkb_instance = ibr.value();
 	vk_instance = vkb_instance.instance;
@@ -432,6 +436,11 @@ bool initialize(GLFWwindow* const window) {
 	}
 
 	vkb::PhysicalDeviceSelector pds(vkb_instance, vk_surface);
+	if (dynamic_rendering) {
+		VkPhysicalDeviceVulkan13Features features{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES};
+		features.dynamicRendering = VK_TRUE;
+		pds.set_minimum_version(1, 3).set_required_features_13(features);
+	}
 
 	auto pds_result = pds.prefer_gpu_device_type(vkb::PreferredDeviceType::discrete)
 						 .require_present()
